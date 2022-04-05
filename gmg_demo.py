@@ -9,10 +9,10 @@ from homeassistant.const import (
 )
 
 class GmgGrill(ClimateEntity):
-    """Representation of a Escea Fire."""
+    """Representation of a Green Mountain Grill smoker"""
 
     def __init__(self, grill):
-        """Initialize the fire."""
+        """Initialize the Grill."""
         self._grill = grill
         self._unique_id = "gmg_{}".format(grill.serial_number)
 
