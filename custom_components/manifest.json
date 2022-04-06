@@ -1,8 +1,10 @@
 {
   "domain": "gmg",
   "name": "GMG Grills",
-  "documentation": "hhttps://github.com/jwhitby91/gmg_home_assistant",
+  "documentation": "https://github.com/jwhitby91/gmg_home_assistant",
+  "issue_tracker": "https://github.com/jwhitby91/gmg_home_assistant",
   "version": "1.0.1",
+  "iot_class": "local",
   "requirements": [],
   "dependencies": [],
   "codeowners": ["@jwhitby91"]
