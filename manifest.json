@@ -1,0 +1,9 @@
+{
+  "domain": "gmg",
+  "name": "GMG Grills",
+  "documentation": "hhttps://github.com/jwhitby91/gmg_home_assistant",
+  "version": "1.0.1",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@jwhitby91"]
+}

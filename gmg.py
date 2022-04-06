@@ -1,19 +1,63 @@
+from audioop import add
+from distutils.log import error
+from email import message
 import socket
 import binascii
 import ipaddress
 # from webbrowser import get
 
+def grills(timeout = 1):
+
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    # this needs to be 0.0.0.0 ... it was binding to wrong adapter
+    sock.bind(('10.100.111.141', grill.UDP_PORT))
+
+    grills = [] 
+
+    try:
+        message = grill.CODE_SERIAL
+        sock.sendto(message, ('<broadcast>', grill.UDP_PORT))
+        # Each recv should have the full timeout period to complete
+        sock.settimeout(timeout)
+
+        while True:
+            # Get some packets from the network
+            data, (address, _) = sock.recvfrom(1024)
+            response = data.decode('utf-8')
+
+            # Confirm it's a GMG serial number
+            try:
+                if response.startswith('GMG'):
+                    grills.append(grill(address, response))
+            except ValueError:
+                pass
+
+    except socket.timeout:
+        # This will always happen, a timeout occurs when we no longer hear from any fires
+        # This is the required flow to break out of the `while True:` statement above.
+        pass
+    finally:
+        # Always close the socket
+        sock.close()
+
+    return grills
+
+
 class grill(object):
     UDP_PORT = 8080
+    MIN_TEMP = 150
+    MAX_TEMP = 550
     CODE_SERIAL = b'UL!'
     CODE_STATUS = b'UR001!'
     
-    def __init__(self, ip):
+    def __init__(self, ip, serial_number = ''):
         
         if not ipaddress.ip_address(ip):
             raise ValueError(f"IP address not valid {ip}")
 
         self._ip = ip 
+        self._serial_number = serial_number
 
     def gmg_status_response (self, value_list):
         # accept list of values from status 
@@ -47,9 +91,9 @@ class grill(object):
 
     def serial(self):
 
-        self.serial_number = self.send(grill.CODE_SERIAL).decode('utf-8')
+        self._serial_number = self.send(grill.CODE_SERIAL).decode('utf-8')
 
-        return self.serial_number
+        return self._serial_number
 
     def send(self, message):
 
