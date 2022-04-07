@@ -11,7 +11,7 @@ def grills(timeout = 1):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
     # this needs to be 0.0.0.0 ... it was binding to wrong adapter
-    sock.bind(('10.100.111.141', grill.UDP_PORT))
+    sock.bind(('0.0.0.0', grill.UDP_PORT))
 
     grills = [] 
 
