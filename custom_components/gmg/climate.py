@@ -1,4 +1,6 @@
-
+"""
+Custom integration to integrate Green Mountain grill with Home Assistant.
+"""
 
 
 import gmg
