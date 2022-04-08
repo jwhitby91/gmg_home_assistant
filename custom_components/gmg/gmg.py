@@ -1,3 +1,7 @@
+"""
+Custom integration to integrate Green Mountain grill with Home Assistant.
+"""
+
 from audioop import add
 from distutils.log import error
 from email import message
