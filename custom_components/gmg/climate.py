@@ -3,7 +3,7 @@ Custom integration to integrate Green Mountain grill with Home Assistant.
 """
 
 
-import gmg
+from .gmg import gmg
 import logging
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.const import (
