@@ -1,7 +1,6 @@
 """Green Mountain Grill"""
 
-
-import gmg
+from .gmg import gmg
 import logging
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.const import (
