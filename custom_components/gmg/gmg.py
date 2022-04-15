@@ -1,17 +1,22 @@
+"""Green Mountain Grill API library"""
+
+
 from audioop import add
 from distutils.log import error
 from email import message
 import socket
 import binascii
 import ipaddress
+from tkinter import W
 # from webbrowser import get
 
-def grills(timeout = 1):
+def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    
     # this needs to be 0.0.0.0 ... it was binding to wrong adapter
-    sock.bind(('10.100.111.141', grill.UDP_PORT))
+    sock.bind((ip_bind_address, grill.UDP_PORT))
 
     grills = [] 
 

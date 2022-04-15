@@ -1,4 +1,4 @@
-
+"""Green Mountain Grill"""
 
 
 import gmg
@@ -80,27 +80,18 @@ class GmgGrill(ClimateEntity):
 
         print (self._state)
 
-#grill_ip = '10.100.111.152'
+def testing(): 
+    # testing PC has multiple adapters so binding to specific adapter IP required when testing. 
+    all_grills = gmg.grills(timeout=2, ip_bind_address='10.100.111.141')
 
-#my_grill = gmg.grill(grill_ip)
+    for my_grill in all_grills:
+        gmg.grill.status(my_grill)
 
-#all_grills = gmg.grills()
+    hass_grill = GmgGrill(my_grill)
 
-#for my_grill in all_grills:
-    #gmg.grill.status(my_grill)
+    print(hass_grill.current_temperature)
 
-#my_grill = gmg.grill.discover_grill(ip = '10.100.111.152')
 
-# my_grill = gmg.discover_grill(ip = '10.100.111.152')
-
-#print(my_grill)
-
-#hass_grill = GmgGrill(my_grill)
-
-#print(hass_grill.current_temperature)
-
-#hass_grill.update()
-
-#print(hass_grill.current_temperature)
+testing()
 
 
