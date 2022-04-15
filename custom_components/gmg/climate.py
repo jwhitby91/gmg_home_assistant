@@ -92,6 +92,6 @@ def testing():
     print(hass_grill.current_temperature)
 
 
-testing()
+#testing()
 
 
