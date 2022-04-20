@@ -6,7 +6,7 @@ import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, HVAC_MODE_HEAT, HVAC_MODE_OFF, HVAC_MODE_COOL)
+    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, HVAC_MODE_HEAT, HVAC_MODE_OFF, HVAC_MODE_FAN_ONLY)
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     TEMP_FAHRENHEIT,
@@ -46,7 +46,7 @@ class GmgGrill(ClimateEntity):
             self._grill.power_on()
         elif hvac_mode == HVAC_MODE_OFF:
             self._grill.power_off()
-        elif hvac_mode == HVAC_MODE_COOL:
+        elif hvac_mode == HVAC_MODE_FAN_ONLY:
             self._grill.power_on_cool()
         else:
             _LOGGER.error("Unsupported hvac mode: %s", hvac_mode)
@@ -60,7 +60,7 @@ class GmgGrill(ClimateEntity):
     @property
     def hvac_modes(self) -> List[str]:
         """Return the supported operations."""
-        return [HVAC_MODE_HEAT, HVAC_MODE_COOL, HVAC_MODE_OFF]
+        return [HVAC_MODE_HEAT, HVAC_MODE_FAN_ONLY, HVAC_MODE_OFF]
 
     @property
     def hvac_mode(self):
