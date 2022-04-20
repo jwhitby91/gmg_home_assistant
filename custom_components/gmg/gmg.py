@@ -101,6 +101,13 @@ class grill(object):
 
         return self.send(message)
 
+    def power_on_cool(self):
+        """Power on the grill to cold smoke mode"""
+
+        message = b'UK002!'
+        return self.send(message)
+
+
     def power_on(self):
         """Power on the grill"""
 
@@ -110,7 +117,7 @@ class grill(object):
     def power_off(self):
         """Power off the grill"""
 
-        message = b'"UK004!'
+        message = b'UK004!'
         return self.send(message)
 
     def status(self):

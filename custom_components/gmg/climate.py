@@ -1,12 +1,12 @@
 """Green Mountain Grill"""
 
 from .gmg import grills, grill
-# from gmg import grills,grill
+#from gmg import grills,grill
 import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
-    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, HVAC_MODE_HEAT, HVAC_MODE_OFF)
+    HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, HVAC_MODE_HEAT, HVAC_MODE_OFF, HVAC_MODE_COOL)
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     TEMP_FAHRENHEIT,
@@ -46,6 +46,8 @@ class GmgGrill(ClimateEntity):
             self._grill.power_on()
         elif hvac_mode == HVAC_MODE_OFF:
             self._grill.power_off()
+        elif hvac_mode == HVAC_MODE_COOL:
+            self._grill.power_on_cool()
         else:
             _LOGGER.error("Unsupported hvac mode: %s", hvac_mode)
         self.update()
@@ -58,7 +60,7 @@ class GmgGrill(ClimateEntity):
     @property
     def hvac_modes(self) -> List[str]:
         """Return the supported operations."""
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        return [HVAC_MODE_HEAT, HVAC_MODE_COOL, HVAC_MODE_OFF]
 
     @property
     def hvac_mode(self):
@@ -70,7 +72,7 @@ class GmgGrill(ClimateEntity):
 
     @property
     def name(self)  -> None:
-        """Return unique ID of grill which is gmg_SERIAL_NUMBER"""
+        """Return unique ID of grill which is GMGSERIAL_NUMBER"""
         return self._unique_id
 
     # Climate Properties
@@ -133,7 +135,11 @@ def testing():
         #grill.power_on(my_grill)
 
         # try setting temp... must send in F not C 
-        grill.set_temp(my_grill, 160)
+        #grill.set_temp(my_grill, 160)
+
+        grill.status(my_grill)
+
+        grill.power_off(my_grill)
 
         grill.status(my_grill)
 
