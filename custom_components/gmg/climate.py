@@ -108,13 +108,6 @@ class GmgGrill(ClimateEntity):
         return self._grill.MIN_TEMP
 
     @property
-    def hvac_modes(self) -> None:
-        """
-        Return the list of available operation modes.
-        """
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-
-    @property
     def unique_id(self) -> None:
         """Return a unique ID."""
         return self._unique_id
