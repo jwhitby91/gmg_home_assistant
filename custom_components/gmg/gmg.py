@@ -7,7 +7,7 @@ from email import message
 import socket
 import binascii
 import ipaddress
-from tkinter import W
+#from tkinter import W
 # from webbrowser import get
 
 def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
@@ -51,8 +51,8 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
 class grill(object):
     UDP_PORT = 8080
-    MIN_TEMP = 150
-    MAX_TEMP = 550
+    MIN_TEMP = 65 # 150 F 
+    MAX_TEMP = 287 # 550 F
     CODE_SERIAL = b'UL!'
     CODE_STATUS = b'UR001!'
     
@@ -90,6 +90,28 @@ class grill(object):
         # print(self.gmg_status)
 
         return self.state
+
+    def set_temp(self, target_temp):
+        """Set the target temperature for the grill"""
+
+        if target_temp < grill.MIN_TEMP or target_temp > grill.MAX_TEMP:
+            raise ValueError(f"Target temperature {target_temp} is out of range")
+
+        message = b'UT' + str(target_temp).encode() + b'!'
+
+        return self.send(message)
+
+    def power_on(self):
+        """Power on the grill"""
+
+        message = b'UK001!'
+        return self.send(message)
+
+    def power_off(self):
+        """Power off the grill"""
+
+        message = b'"UK004!'
+        return self.send(message)
 
     def status(self):
         return self.gmg_status_response(list(self.send(grill.CODE_STATUS)))
