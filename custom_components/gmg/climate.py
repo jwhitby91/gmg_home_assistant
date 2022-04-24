@@ -1,7 +1,7 @@
 """Green Mountain Grill"""
 
-from .gmg import grills, grill
-#from gmg import grills,grill
+#from .gmg import grills, grill
+from gmg import grills,grill
 import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
@@ -10,7 +10,11 @@ from homeassistant.components.climate.const import (
 from homeassistant.const import (
     ATTR_TEMPERATURE,
     TEMP_FAHRENHEIT,
+    CONF_TEMPERATURE_UNIT
 )
+
+print(CONF_TEMPERATURE_UNIT)
+print(ATTR_TEMPERATURE)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,6 +44,13 @@ class GmgGrill(ClimateEntity):
         self.update()
 
 
+    async def async_set_temperature(self, **kwargs):
+        """Set new target temperature."""
+        temperature = kwargs.get(ATTR_TEMPERATURE)
+
+        print(temperature)
+        # await self._grill.set_temp(round(temperature))
+
     def set_hvac_mode(self, hvac_mode: str) -> None:
         """Set the operation mode"""
         if hvac_mode == HVAC_MODE_HEAT:
@@ -56,6 +67,10 @@ class GmgGrill(ClimateEntity):
     def supported_features(self):
         """Return the list of supported features."""
         return (SUPPORT_TARGET_TEMPERATURE)
+    
+    @property
+    def icon(self):
+        return "mdi:grill"
 
     @property
     def hvac_modes(self) -> List[str]:
@@ -67,6 +82,8 @@ class GmgGrill(ClimateEntity):
         """Return current HVAC operation."""
         if self._state['on']:
             return HVAC_MODE_HEAT
+        elif self._state['on'] == 2:
+            return HVAC_MODE_FAN_ONLY
 
         return HVAC_MODE_OFF
 
@@ -100,12 +117,18 @@ class GmgGrill(ClimateEntity):
     @property
     def max_temp(self) -> None:
         """Return the maximum temperature."""
-        return self._grill.MAX_TEMP
+        if ATTR_TEMPERATURE == "°C":
+            return self._grill.MAX_TEMP_C
+        
+        return self._grill.MAX_TEMP_F
     
     @property
     def min_temp(self) -> None:
         """Return the minimum temperature."""
-        return self._grill.MIN_TEMP
+        if ATTR_TEMPERATURE == '°C':
+            return self._grill.MIN_TEMP_C
+
+        return self._grill.MIN_TEMP_F
 
     @property
     def unique_id(self) -> None:

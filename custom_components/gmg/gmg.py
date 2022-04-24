@@ -51,8 +51,10 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
 class grill(object):
     UDP_PORT = 8080
-    MIN_TEMP = 65 # 150 F 
-    MAX_TEMP = 287 # 550 F
+    MIN_TEMP_C = 65 # Minimum temperature in degrees Celsius 
+    MIN_TEMP_F = 150 # Minimum temperature in degrees Fahrenheit 
+    MAX_TEMP_C = 287 # Maximum temperature in degrees Celsius
+    MAX_TEMP_F = 287 # Maximum Temperature in degrees Fahrenheit
     CODE_SERIAL = b'UL!'
     CODE_STATUS = b'UR001!'
     
