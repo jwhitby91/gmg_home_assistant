@@ -3,8 +3,8 @@
 from ast import Not
 from html import entities
 from importlib.metadata import entry_points
-#from .gmg import grills, grill
-from gmg import grills,grill
+from .gmg import grills, grill
+#from gmg import grills,grill
 import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
@@ -307,6 +307,6 @@ def testing():
 
     
 
-testing()
+#testing()
 
 
