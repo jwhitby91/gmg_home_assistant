@@ -2,17 +2,16 @@
 
 **WARNING** This compoment is still in development 
 
-
 ## Installation
 
 Install via HACS 
 
 Add below to configuration.yaml in home assistant
 
-[code]
+<code>
 climate:
   - platform: gmg
-[/code]
+</code>
 
 ## Requirements 
 
@@ -21,16 +20,23 @@ Auto discovery will discover multiple GMG devices if on same network as home ass
 
 ## TODO 
 
-Sensors for 
-    [*] food probes (temperature monitor.. set temperature etc.) - in development.. Set them up as climate as you can set temp for them 
-    [*] Warning states..
-    [*] Fire States
-Test cold smoke mode 
-Ramp cooks
+<ul>
+    <li>Sensors for
+        <ul>
+            <li>food probes (temperature monitor.. set temperature etc.) - in development.. Set them up as climate as you can set temp for them </li>
+            <li>Warning states..</li>
+            <li>Fire States</li>
+        </ul>
+    </li>
+    <li>Test cold smoke mode</li>
+    <li>Ramp cooks</li>
+</ul>
 
 ## Test
 
-Power on - successful
-Power off - successful 
-Set temp - successful
-Probes - successful 
+<ul>
+    <li>Power on - successful</li>
+    <li>Power off - successful</li>
+    <li>Set temp - successful</li>
+    </li>Probes - successful </li>
+</ul>
