@@ -90,6 +90,12 @@ class grill(object):
             self.state['probe2_temp_high'] = value_list[17]
             self.state['probe2_set_temp'] = value_list[18]
             self.state['probe2_set_temp_high'] = value_list[19]
+
+            # Grill health stats
+            self.state['fireState'] = value_list[32]
+            self.state['fireStatePercentage'] = value_list[33]
+            self.state['warnState'] = value_list[24]
+
         except Exception as e:
             print(e)
             
@@ -102,6 +108,20 @@ class grill(object):
             raise ValueError(f"Target temperature {target_temp} is out of range")
 
         message = b'UT' + str(target_temp).encode() + b'!'
+
+        return self.send(message)
+
+    def set_temp_probe(self, target_temp, probe_number):
+        """Set the target temperature for the grill probe"""
+
+        if target_temp < grill.MIN_TEMP_F_PROBE or target_temp > grill.MAX_TEMP_F_PROBE:
+            raise ValueError(f"Target temperature {target_temp} is out of range")
+            return
+
+        if probe_number == 1:
+            message = b'UF' + str(target_temp).encode() + b'!'
+        elif probe_number == 2:
+            message = b'Uf' + str(target_temp).encode() + b'!'        
 
         return self.send(message)
 

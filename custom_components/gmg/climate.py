@@ -3,8 +3,8 @@
 from ast import Not
 from html import entities
 from importlib.metadata import entry_points
-from .gmg import grills, grill
-#from gmg import grills,grill
+#from .gmg import grills, grill
+from gmg import grills,grill
 import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
@@ -196,7 +196,7 @@ class GmgGrillProbe(ClimateEntity):
 
         try:
             _LOGGER.debug(f"Setting probe temperature to {temperature}")
-            self._grill.set_temp(int(temperature))
+            self._grill.set_temp_probe(int(temperature), self._probe_count)
         except Exception as ex:
             _LOGGER.error("Error setting temperature: %s", temperature)
 
@@ -285,7 +285,13 @@ def testing():
         probe_count = 2
 
         while count <= probe_count:
-            entities.append(GmgGrillProbe(my_grill, count))
+            probe = GmgGrillProbe(my_grill, count)
+
+
+            #my_grill.set_temp_probe(150, count)
+            grill.status(my_grill)
+
+
             count += 1
 
         #grill.power_on(my_grill)
@@ -301,6 +307,6 @@ def testing():
 
     
 
-#testing()
+testing()
 
 
