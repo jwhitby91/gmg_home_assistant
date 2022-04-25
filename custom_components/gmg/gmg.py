@@ -51,10 +51,11 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
 class grill(object):
     UDP_PORT = 8080
-    MIN_TEMP_C = 65 # Minimum temperature in degrees Celsius 
-    MIN_TEMP_F = 150 # Minimum temperature in degrees Fahrenheit 
-    MAX_TEMP_C = 287 # Maximum temperature in degrees Celsius
+    MIN_TEMP_F = 150 # Minimum temperature in degrees Fahrenheit
     MAX_TEMP_F = 287 # Maximum Temperature in degrees Fahrenheit
+    MIN_TEMP_F_PROBE = 32 # Mimimum temperature in degrees Fahrenheit
+    MAX_TEMP_F_PROBE = 257 # Maximum temperature in degrees Fahrenheit 
+    
     CODE_SERIAL = b'UL!'
     CODE_STATUS = b'UR001!'
     
@@ -71,26 +72,27 @@ class grill(object):
         self.state = {}
 
         # grill general status
-        self.state['on'] = value_list[30]
-        self.state['temp'] = value_list[2]
-        self.state['temp_high'] = value_list[3]
-        self.state['grill_set_temp'] = value_list[6]
-        self.state['grill_set_temp_high'] = value_list[7]
+        try:
+            self.state['on'] = value_list[30]
+            self.state['temp'] = value_list[2]
+            self.state['temp_high'] = value_list[3]
+            self.state['grill_set_temp'] = value_list[6]
+            self.state['grill_set_temp_high'] = value_list[7]
 
-        # probe 1 stats
-        self.state['probe_temp'] = value_list[4]
-        self.state['probe_temp_high'] = value_list[5]
-        self.state['prob_set_temp'] = value_list[28]
-        self.state['prob_set_temp_high'] = value_list[29]
-        
-        # probe 2 stats
-        self.state['probe2_temp'] = value_list[16]
-        self.state['probe2_temp_high'] = value_list[17]
-        self.state['probe2_set_temp'] = value_list[18]
-        self.state['probe2_set_temp_high'] = value_list[19]
-        
-        # print(self.gmg_status)
-
+            # probe 1 stats
+            self.state['probe1_temp'] = value_list[4]
+            self.state['probe1_temp_high'] = value_list[5]
+            self.state['probe1_set_temp'] = value_list[28]
+            self.state['probe1_set_temp_high'] = value_list[29]
+            
+            # probe 2 stats
+            self.state['probe2_temp'] = value_list[16]
+            self.state['probe2_temp_high'] = value_list[17]
+            self.state['probe2_set_temp'] = value_list[18]
+            self.state['probe2_set_temp_high'] = value_list[19]
+        except Exception as e:
+            print(e)
+            
         return self.state
 
     def set_temp(self, target_temp):

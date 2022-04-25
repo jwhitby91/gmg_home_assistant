@@ -1,5 +1,8 @@
 """Green Mountain Grill"""
 
+from ast import Not
+from html import entities
+from importlib.metadata import entry_points
 from .gmg import grills, grill
 #from gmg import grills,grill
 import logging
@@ -22,7 +25,15 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
     for my_grill in all_grills: 
         _LOGGER.debug(f"Found grill IP: {my_grill._ip} Serial: {my_grill._serial_number}")
+
         entities.append(GmgGrill(my_grill))
+
+        count = 1
+        probe_count = 2
+
+        while count <= probe_count:
+            entities.append(GmgGrillProbe(my_grill, count))
+            count += 1
 
     async_add_entities(entities)
 
@@ -34,7 +45,9 @@ class GmgGrill(ClimateEntity):
     def __init__(self, grill) -> None:
         """Initialize the Grill."""
         self._grill = grill
+
         self._unique_id = "{}".format(self._grill._serial_number)
+        
         self.update()
 
 
@@ -156,31 +169,122 @@ class GmgGrill(ClimateEntity):
 
         print (self._state)
 
+class GmgGrillProbe(ClimateEntity):
+    """Representation of a Green Mountain Grill smoker food probes"""
+
+    def __init__(self, grill, probe_count) -> None:
+        """Initialize the Grill."""
+        self._grill = grill
+        self._unique_id = f"{self._grill._serial_number}_probe_{probe_count}"
+        self._probe_count = probe_count
+        self.update()
+
+
+    def set_temperature(self, **kwargs):
+        """Set new target temperature."""
+        temperature = kwargs.get(ATTR_TEMPERATURE)
+
+        if temperature is None:
+            return
+        if temperature == self._state['probe1_set_temp']:
+            return
+        
+        # Add in section if grill is not on to error... 
+        if self._state['on'] == 0:
+            _LOGGER.error("Grill is not on, cannot set temperature")
+            return
+
+        try:
+            _LOGGER.debug(f"Setting probe temperature to {temperature}")
+            self._grill.set_temp(int(temperature))
+        except Exception as ex:
+            _LOGGER.error("Error setting temperature: %s", temperature)
+
+    @property
+    def supported_features(self):
+        """Return the list of supported features."""
+        return (SUPPORT_TARGET_TEMPERATURE)
+    
+    @property
+    def icon(self):
+        return "mdi:thermometer-lines"
+
+    @property
+    def name(self)  -> None:
+        """Return unique ID of grill which is GMGSERIAL_NUMBER_probe_count"""
+        return self._unique_id
+
+    @property
+    def temperature_unit(self) -> None:
+        """Return the unit of measurement for the probe"""
+        # intial tests look like raw value always in F not C even when set in the app. 
+        return TEMP_FAHRENHEIT
+
+    @property
+    def current_temperature(self) -> None:
+        """Return current temp of the grill"""
+        return self._state.get(f'probe{self._probe_count}_temp')
+
+    @property
+    def target_temperature_step(self) -> None:
+        """Return the supported step of target temp"""        
+        return 1
+        
+    @property
+    def target_temperature(self) -> None:
+        """Return what the temp is set to go to"""
+        return self._state.get(f'probe{self._probe_count}_set_temp')
+
+    @property
+    def max_temp(self) -> None:
+        """Return the maximum temperature."""
+        return self._grill.MAX_TEMP_F_PROBE
+
+    @property
+    def min_temp(self) -> None:
+        """Return the minimum temperature."""
+        return self._grill.MIN_TEMP_F_PROBE
+
+    @property
+    def unique_id(self) -> None:
+        """Return a unique ID."""
+        return self._unique_id
+
+    def update(self) -> None:
+        """Get latest data."""
+        self._state = self._grill.status()
+
+        print (self._state)
+
 def testing(): 
     # testing PC has multiple adapters so binding to specific adapter IP required when testing. 
     all_grills = grills(timeout=2, ip_bind_address='10.100.111.141')
 
+    entities = [] 
     for my_grill in all_grills:
+
         grill.status(my_grill)
+
+        count = 1
+        probe_count = 2
+
+        while count <= probe_count:
+            entities.append(GmgGrillProbe(my_grill, count))
+            count += 1
 
         #grill.power_on(my_grill)
 
         # try setting temp... must send in F not C 
         #grill.set_temp(my_grill, 160)
 
-        grill.status(my_grill)
+        #grill.status(my_grill)
 
-        grill.power_off(my_grill)
+        #grill.power_off(my_grill)
 
-        grill.status(my_grill)
+        #grill.status(my_grill)
 
-    hass_grill = GmgGrill(my_grill)
+    
 
-    print(hass_grill.current_temperature)
-
-    print(hass_grill)
-
-
-# testing()
+#testing()
 
 
