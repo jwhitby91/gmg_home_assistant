@@ -1,7 +1,7 @@
 """Green Mountain Grill"""
 
-#from .gmg import grills, grill
-from gmg import grills,grill
+from .gmg import grills, grill
+#from gmg import grills,grill
 import logging
 from typing import List, Optional
 from homeassistant.components.climate import ClimateEntity
@@ -9,12 +9,7 @@ from homeassistant.components.climate.const import (
     HVAC_MODE_OFF, HVAC_MODE_HEAT, SUPPORT_TARGET_TEMPERATURE, HVAC_MODE_HEAT, HVAC_MODE_OFF, HVAC_MODE_FAN_ONLY)
 from homeassistant.const import (
     ATTR_TEMPERATURE,
-    TEMP_FAHRENHEIT,
-    CONF_TEMPERATURE_UNIT
-)
-
-print(CONF_TEMPERATURE_UNIT)
-print(ATTR_TEMPERATURE)
+    TEMP_FAHRENHEIT)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,17 +34,35 @@ class GmgGrill(ClimateEntity):
     def __init__(self, grill) -> None:
         """Initialize the Grill."""
         self._grill = grill
-        # print(self._grill)
         self._unique_id = "{}".format(self._grill._serial_number)
         self.update()
 
 
-    async def async_set_temperature(self, **kwargs):
+    def set_temperature(self, **kwargs):
         """Set new target temperature."""
         temperature = kwargs.get(ATTR_TEMPERATURE)
 
-        print(temperature)
-        # await self._grill.set_temp(round(temperature))
+        if temperature is None:
+            return
+        if temperature == self._state['grill_set_temp']:
+            return
+        
+        # Add in section if grill is not on to error... 
+        if self._state['on'] == 0:
+            _LOGGER.error("Grill is not on, cannot set temperature")
+            return
+
+        # Add another section if grill not 150 F to not raise temp 
+        if self._state['temp'] < 145:
+            # GMG manual says need to wait until 150 F at least before changing temp 
+            _LOGGER.error("Grill is not 150 F, cannot set temperature")
+            return
+
+        try:
+            _LOGGER.debug(f"Setting temperature to {temperature}")
+            self._grill.set_temp(int(temperature))
+        except Exception as ex:
+            _LOGGER.error("Error setting temperature: %s", temperature)
 
     def set_hvac_mode(self, hvac_mode: str) -> None:
         """Set the operation mode"""
@@ -61,8 +74,13 @@ class GmgGrill(ClimateEntity):
             self._grill.power_on_cool()
         else:
             _LOGGER.error("Unsupported hvac mode: %s", hvac_mode)
+
         self.update()
 
+    def turn_off(self):
+        """Turn device off."""
+        return self._grill.power_off()
+    
     @property
     def supported_features(self):
         """Return the list of supported features."""
@@ -80,7 +98,7 @@ class GmgGrill(ClimateEntity):
     @property
     def hvac_mode(self):
         """Return current HVAC operation."""
-        if self._state['on']:
+        if self._state['on'] == 1:
             return HVAC_MODE_HEAT
         elif self._state['on'] == 2:
             return HVAC_MODE_FAN_ONLY
@@ -107,8 +125,9 @@ class GmgGrill(ClimateEntity):
     @property
     def target_temperature_step(self) -> None:
         """Return the supported step of target temp"""
-        return 5
-    
+        
+        return 1
+        
     @property
     def target_temperature(self) -> None:
         """Return what the temp is set to go to"""
@@ -117,16 +136,12 @@ class GmgGrill(ClimateEntity):
     @property
     def max_temp(self) -> None:
         """Return the maximum temperature."""
-        if ATTR_TEMPERATURE == "°C":
-            return self._grill.MAX_TEMP_C
-        
+
         return self._grill.MAX_TEMP_F
-    
+
     @property
     def min_temp(self) -> None:
         """Return the minimum temperature."""
-        if ATTR_TEMPERATURE == '°C':
-            return self._grill.MIN_TEMP_C
 
         return self._grill.MIN_TEMP_F
 

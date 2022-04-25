@@ -39,7 +39,7 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
                 pass
 
     except socket.timeout:
-        # This will always happen, a timeout occurs when we no longer hear from any fires
+        # This will always happen, a timeout occurs when we no longer hear from any grills
         # This is the required flow to break out of the `while True:` statement above.
         pass
     finally:
@@ -96,7 +96,7 @@ class grill(object):
     def set_temp(self, target_temp):
         """Set the target temperature for the grill"""
 
-        if target_temp < grill.MIN_TEMP or target_temp > grill.MAX_TEMP:
+        if target_temp < grill.MIN_TEMP_F or target_temp > grill.MAX_TEMP_F:
             raise ValueError(f"Target temperature {target_temp} is out of range")
 
         message = b'UT' + str(target_temp).encode() + b'!'
