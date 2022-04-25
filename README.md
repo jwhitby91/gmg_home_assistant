@@ -9,8 +9,8 @@ Install via HACS
 Add below to configuration.yaml in home assistant
 
 <code>
-climate:
-  - platform: gmg
+    climate:
+        - platform: gmg
 </code>
 
 ## Requirements 
@@ -38,5 +38,5 @@ Auto discovery will discover multiple GMG devices if on same network as home ass
     <li>Power on - successful</li>
     <li>Power off - successful</li>
     <li>Set temp - successful</li>
-    </li>Probes - successful </li>
+    <li>Probes - successful</li>
 </ul>
