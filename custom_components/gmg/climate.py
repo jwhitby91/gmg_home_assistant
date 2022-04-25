@@ -200,6 +200,22 @@ class GmgGrillProbe(ClimateEntity):
         except Exception as ex:
             _LOGGER.error("Error setting temperature: %s", temperature)
 
+
+    @property
+    def hvac_modes(self) -> List[str]:
+        """Return the supported operations."""
+        return [HVAC_MODE_OFF]
+
+    @property
+    def hvac_mode(self):
+        """Return current HVAC operation."""
+
+        # Probe temp is 89 when it is not plugged in... need to find out if better way to find if connected or not..
+        if self._state['on'] == 1 and self._state[f'probe{self._probe_count}_temp'] != 89:
+            return HVAC_MODE_HEAT
+
+        return HVAC_MODE_OFF
+
     @property
     def supported_features(self):
         """Return the list of supported features."""
