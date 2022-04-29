@@ -22,9 +22,11 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
     try:
         message = grill.CODE_SERIAL
-        sock.sendto(message, ('<broadcast>', grill.UDP_PORT))
+        
         # Each recv should have the full timeout period to complete
         sock.settimeout(timeout)
+
+        sock.sendto(message, ('<broadcast>', grill.UDP_PORT))
 
         while True:
             # Get some packets from the network
@@ -153,15 +155,18 @@ class grill(object):
 
         return self._serial_number
 
-    def send(self, message):
+    def send(self, message, timeout = 1):
 
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        
         try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.settimeout(timeout)
+
             sock.sendto(message, (self._ip, grill.UDP_PORT))
             data, _ = sock.recvfrom(1024)
         
         except socket.timeout:
             print('timeout')
+        except Exception as e: 
+            print(e)
            
         return data
