@@ -4,7 +4,18 @@
 
 ## Installation
 
-Install via HACS (click 3 dots in top right > Custom Repositories > add this github as integration > press ok.. Then click Exlore & download repo bottom right then select Green Mountain Grill)
+Install via HACS 
+
+<ul>
+    <li>click 3 dots in top right</li>
+    <li>Custom Repositories</li>
+    <li>add this github URI as integration</li>
+    <li>click add</li>
+    </br>
+    <li>click Exlore & download repo bottom right</li>
+    <li>Search & select Green Mountain Grill</li>
+    <li>Click install</li>
+</ul>
 
 Add below to configuration.yaml in home assistant
 
@@ -24,6 +35,11 @@ Auto discovery will discover multiple GMG devices if on same network as home ass
     <li>Sensors for
         <ul>
             <li>food probes (temperature monitor.. set temperature etc.) - in development.. Set them up as climate as you can set temp for them </li>
+            <li>
+                <ul>
+                    <li>Need to better detect when probes are unplugged</li>
+                </ul>
+            </li>
             <li>Warning states..</li>
             <li>Fire States</li>
         </ul>
