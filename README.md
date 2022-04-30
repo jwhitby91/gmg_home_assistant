@@ -8,10 +8,10 @@ Install via HACS (click 3 dots in top right > Custom Repositories > add this git
 
 Add below to configuration.yaml in home assistant
 
-<code>
-    climate:<br>
+```yaml
+    climate:
         - platform: gmg
-</code>
+```
 
 ## Requirements 
 
@@ -37,6 +37,6 @@ Auto discovery will discover multiple GMG devices if on same network as home ass
 <ul>
     <li>Power on - successful</li>
     <li>Power off - successful</li>
-    <li>Set temp - successful <b>Notes:</b> as recommended in GMG manual you shouldn't change temp until it reaches 150 F so I put in check to only change temp once that has been reached</li> 
+    <li>Set temp - successful </br><b>Notes:</b> as recommended in GMG manual you shouldn't change temp until it reaches 150 F so I put in check to only change temp once that has been reached</li> 
     <li>Probes - successful</li>
 </ul>
