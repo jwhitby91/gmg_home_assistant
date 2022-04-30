@@ -1,15 +1,15 @@
 # Green Mountain Grill for Home Assistant
 
-**WARNING** This compoment is still in development 
+## **WARNING** This compoment is still in development. Use with caution!  
 
 ## Installation
 
-Install via HACS 
+Install via HACS (click 3 dots in top right > Custom Repositories > add this github as integration > press ok.. Then click Exlore & download repo bottom right then select Green Mountain Grill)
 
 Add below to configuration.yaml in home assistant
 
 <code>
-    climate:
+    climate:<br>
         - platform: gmg
 </code>
 
@@ -29,14 +29,14 @@ Auto discovery will discover multiple GMG devices if on same network as home ass
         </ul>
     </li>
     <li>Test cold smoke mode</li>
-    <li>Ramp cooks</li>
+    <li>Change Home assistant to use config flow for easier set up</li>
 </ul>
 
-## Test
+## Test list
 
 <ul>
     <li>Power on - successful</li>
     <li>Power off - successful</li>
-    <li>Set temp - successful</li>
+    <li>Set temp - successful <b>Notes:</b> as recommended in GMG manual you shouldn't change temp until it reaches 150 F so I put in check to only change temp once that has been reached</li> 
     <li>Probes - successful</li>
 </ul>
