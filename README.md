@@ -26,8 +26,10 @@ Add below to configuration.yaml in home assistant
 
 ## Requirements 
 
-UDP port 8080 open between home assistant & GMG
-Auto discovery will discover multiple GMG devices if on same network as home assistant 
+<ul>
+    <li>UDP port 8080 open between home assistant & GMG</li>
+    <li>Auto discovery will discover multiple GMG devices if on same network as home assistant</li>
+</ul>
 
 ## TODO 
 

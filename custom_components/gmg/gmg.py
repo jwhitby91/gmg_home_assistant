@@ -1,14 +1,13 @@
 """Green Mountain Grill API library"""
 
 
-from audioop import add
-from distutils.log import error
-from email import message
+#from audioop import add
+#from distutils.log import error
+#from email import message
 import socket
 import binascii
 import ipaddress
-#from tkinter import W
-# from webbrowser import get
+
 
 def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
@@ -54,7 +53,7 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 class grill(object):
     UDP_PORT = 8080
     MIN_TEMP_F = 150 # Minimum temperature in degrees Fahrenheit
-    MAX_TEMP_F = 287 # Maximum Temperature in degrees Fahrenheit
+    MAX_TEMP_F = 500 # Maximum Temperature in degrees Fahrenheit
     MIN_TEMP_F_PROBE = 32 # Mimimum temperature in degrees Fahrenheit
     MAX_TEMP_F_PROBE = 257 # Maximum temperature in degrees Fahrenheit 
     
@@ -150,12 +149,15 @@ class grill(object):
         return self.gmg_status_response(list(self.send(grill.CODE_STATUS)))
 
     def serial(self):
-
+        """Get serial number of grill"""
         self._serial_number = self.send(grill.CODE_SERIAL).decode('utf-8')
 
         return self._serial_number
 
-    def send(self, message, timeout = 1):
+    def send(self, message, timeout = 1):  
+        """Function to send messages via UDP to grill"""
+
+        data = None
 
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
