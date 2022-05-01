@@ -150,12 +150,15 @@ class grill(object):
         return self.gmg_status_response(list(self.send(grill.CODE_STATUS)))
 
     def serial(self):
-
+        """Get serial number of grill"""
         self._serial_number = self.send(grill.CODE_SERIAL).decode('utf-8')
 
         return self._serial_number
 
-    def send(self, message, timeout = 1):
+    def send(self, message, timeout = 1):  
+        """Function to send messages via UDP to grill"""
+
+        data = None
 
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
