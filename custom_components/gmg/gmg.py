@@ -146,7 +146,17 @@ class grill(object):
         return self.send(message)
 
     def status(self):
-        return self.gmg_status_response(list(self.send(grill.CODE_STATUS)))
+        """Get status of grill"""
+
+        status = self.send(grill.CODE_STATUS)
+
+        if status is None:
+            # No response from grill
+            raise Warning("No response from grill")
+            return
+        
+        return self.gmg_status_response(list(status))
+
 
     def serial(self):
         """Get serial number of grill"""
