@@ -7,6 +7,10 @@
 import socket
 import binascii
 import ipaddress
+import time
+import logging
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
@@ -65,12 +69,16 @@ class grill(object):
         if not ipaddress.ip_address(ip):
             raise ValueError(f"IP address not valid {ip}")
 
+        _LOGGER.debug(f"Initializing grill {ip} with serial number {serial_number}")
+
         self._ip = ip 
         self._serial_number = serial_number
 
     def gmg_status_response (self, value_list):
         # accept list of values from status 
         self.state = {}
+
+        _LOGGER.debug(f"Status response raw: {value_list}")
 
         # grill general status
         try:
@@ -100,6 +108,8 @@ class grill(object):
         except Exception as e:
             print(e)
             
+        _LOGGER.debug(f"Status response: {self.state}") 
+
         return self.state
 
     def set_temp(self, target_temp):
@@ -148,13 +158,20 @@ class grill(object):
     def status(self):
         """Get status of grill"""
 
-        status = self.send(grill.CODE_STATUS)
+        status = None
+        count = 0
+
+        # No response from grill so resend status request but no more than 5 times
+        # cannot add delay here because it will delay the whole program (Home assistant)
+        while status is None or count < 5:
+            status = self.send(grill.CODE_STATUS)
+
+            # add delay of 2 seconds to allow grill to process status   
+            count += 1
 
         if status is None:
-            # No response from grill
             raise Warning("No response from grill")
-            return
-        
+               
         return self.gmg_status_response(list(status))
 
 

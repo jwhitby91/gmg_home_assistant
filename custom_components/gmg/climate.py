@@ -47,6 +47,8 @@ class GmgGrill(ClimateEntity):
         self._grill = grill
 
         self._unique_id = "{}".format(self._grill._serial_number)
+
+        _LOGGER.debug(f"Found grill IP: {self._grill._ip} Serial: {self._grill._serial_number}")
         
         self.update()
 
@@ -167,6 +169,8 @@ class GmgGrill(ClimateEntity):
         """Get latest data."""
         self._state = self._grill.status()
 
+        _LOGGER.debug(f"State: {self._state}")
+
         print (self._state)
 
 class GmgGrillProbe(ClimateEntity):
@@ -270,43 +274,6 @@ class GmgGrillProbe(ClimateEntity):
         """Get latest data."""
         self._state = self._grill.status()
 
+        _LOGGER.debug(f"State: {self._state}")
+
         print (self._state)
-
-def testing(): 
-    # testing PC has multiple adapters so binding to specific adapter IP required when testing. 
-    all_grills = grills(timeout=2, ip_bind_address='10.100.111.141')
-
-    entities = [] 
-    for my_grill in all_grills:
-
-        grill.status(my_grill)
-
-        count = 1
-        probe_count = 2
-
-        while count <= probe_count:
-            probe = GmgGrillProbe(my_grill, count)
-
-
-            #my_grill.set_temp_probe(150, count)
-            grill.status(my_grill)
-
-
-            count += 1
-
-        #grill.power_on(my_grill)
-
-        # try setting temp... must send in F not C 
-        #grill.set_temp(my_grill, 160)
-
-        #grill.status(my_grill)
-
-        #grill.power_off(my_grill)
-
-        #grill.status(my_grill)
-
-    
-
-#testing()
-
-
