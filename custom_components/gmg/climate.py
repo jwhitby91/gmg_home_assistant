@@ -273,4 +273,4 @@ class GmgGrillProbe(ClimateEntity):
         """Get latest data."""
         self._state = self._grill.status()
 
-        _LOGGER.debug(f"State: {self._state}")
+        #_LOGGER.debug(f"State: {self._state}")
