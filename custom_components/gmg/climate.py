@@ -1,5 +1,6 @@
 """Green Mountain Grill"""
 
+
 from ast import Not
 from html import entities
 from importlib.metadata import entry_points
@@ -45,8 +46,9 @@ class GmgGrill(ClimateEntity):
     def __init__(self, grill) -> None:
         """Initialize the Grill."""
         self._grill = grill
-
         self._unique_id = "{}".format(self._grill._serial_number)
+        
+        _LOGGER.debug(f"Found grill IP: {self._grill._ip} Serial: {self._grill._serial_number}")
         
         self.update()
 
@@ -62,20 +64,21 @@ class GmgGrill(ClimateEntity):
         
         # Add in section if grill is not on to error... 
         if self._state['on'] == 0:
-            _LOGGER.error("Grill is not on, cannot set temperature")
+            _LOGGER.warning("Grill is not on, cannot set temperature")
+            # TODO: Add in section to turn on grill.. May not do this to prevent accidential turning on of grill. 
             return
 
-        # Add another section if grill not 150 F to not raise temp 
+        # Add another section if grill not 150 F to not raise temp.
         if self._state['temp'] < 145:
             # GMG manual says need to wait until 150 F at least before changing temp 
-            _LOGGER.error("Grill is not 150 F, cannot set temperature")
+            _LOGGER.warning(f"Grill is not 150 F, cannot set temperature. Temp is {self._state['temp']}")
             return
 
         try:
             _LOGGER.debug(f"Setting temperature to {temperature}")
             self._grill.set_temp(int(temperature))
         except Exception as ex:
-            _LOGGER.error("Error setting temperature: %s", temperature)
+            _LOGGER.error(f"Error setting temperature: {temperature}")
 
     def set_hvac_mode(self, hvac_mode: str) -> None:
         """Set the operation mode"""
@@ -86,7 +89,7 @@ class GmgGrill(ClimateEntity):
         elif hvac_mode == HVAC_MODE_FAN_ONLY:
             self._grill.power_on_cool()
         else:
-            _LOGGER.error("Unsupported hvac mode: %s", hvac_mode)
+            _LOGGER.error(f"Unsupported hvac mode: {hvac_mode}")
 
         self.update()
 
@@ -138,7 +141,6 @@ class GmgGrill(ClimateEntity):
     @property
     def target_temperature_step(self) -> None:
         """Return the supported step of target temp"""
-        
         return 1
         
     @property
@@ -149,13 +151,11 @@ class GmgGrill(ClimateEntity):
     @property
     def max_temp(self) -> None:
         """Return the maximum temperature."""
-
         return self._grill.MAX_TEMP_F
 
     @property
     def min_temp(self) -> None:
         """Return the minimum temperature."""
-
         return self._grill.MIN_TEMP_F
 
     @property
@@ -167,7 +167,7 @@ class GmgGrill(ClimateEntity):
         """Get latest data."""
         self._state = self._grill.status()
 
-        print (self._state)
+        _LOGGER.debug(f"State: {self._state}")
 
 class GmgGrillProbe(ClimateEntity):
     """Representation of a Green Mountain Grill smoker food probes"""
@@ -177,6 +177,9 @@ class GmgGrillProbe(ClimateEntity):
         self._grill = grill
         self._unique_id = f"{self._grill._serial_number}_probe_{probe_count}"
         self._probe_count = probe_count
+
+        _LOGGER.debug(f"From grill: {self._grill._serial_number} init probe: {probe_count}")
+
         self.update()
 
 
@@ -198,7 +201,7 @@ class GmgGrillProbe(ClimateEntity):
             _LOGGER.debug(f"Setting probe temperature to {temperature}")
             self._grill.set_temp_probe(int(temperature), self._probe_count)
         except Exception as ex:
-            _LOGGER.error("Error setting temperature: %s", temperature)
+            _LOGGER.error(f"Error setting temperature: {temperature}")
 
 
     @property
@@ -270,43 +273,4 @@ class GmgGrillProbe(ClimateEntity):
         """Get latest data."""
         self._state = self._grill.status()
 
-        print (self._state)
-
-def testing(): 
-    # testing PC has multiple adapters so binding to specific adapter IP required when testing. 
-    all_grills = grills(timeout=2, ip_bind_address='10.100.111.141')
-
-    entities = [] 
-    for my_grill in all_grills:
-
-        grill.status(my_grill)
-
-        count = 1
-        probe_count = 2
-
-        while count <= probe_count:
-            probe = GmgGrillProbe(my_grill, count)
-
-
-            #my_grill.set_temp_probe(150, count)
-            grill.status(my_grill)
-
-
-            count += 1
-
-        #grill.power_on(my_grill)
-
-        # try setting temp... must send in F not C 
-        #grill.set_temp(my_grill, 160)
-
-        #grill.status(my_grill)
-
-        #grill.power_off(my_grill)
-
-        #grill.status(my_grill)
-
-    
-
-#testing()
-
-
+        #_LOGGER.debug(f"State: {self._state}")
