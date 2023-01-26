@@ -1,6 +1,5 @@
 {
   "codeowners": ["@jwhitby91"],
-  "config_flow": false,
   "dependencies": [],
   "documentation": "https://github.com/jwhitby91/gmg_home_assistant",
   "domain": "gmg",
