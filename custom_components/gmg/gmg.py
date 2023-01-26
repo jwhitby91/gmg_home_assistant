@@ -30,6 +30,7 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            #Bind to the specific IP for the adapter and use port 0 to signify any open port by the OS
             sock.bind((ip, 0))
             
             # Each recv should have the full timeout period to complete
@@ -40,6 +41,7 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
             _LOGGER.debug("Broadcast sent.")
 
             while True:
+                addGrill = True
                 # Get some packets from the network
                 data, (address, retSocket) = sock.recvfrom(1024)
                 response = data.decode('utf-8')
@@ -49,7 +51,13 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
                 try:
                     if response.startswith('GMG'):
                         _LOGGER.debug(f"Found grill {address}:{retSocket}, {response}")
-                        grills.append(grill(address, response))
+                        for grillTest in grills:
+                            if grillTest._serial_number == response:  # TODO: Define a property for serial number
+                                _LOGGER.debug(f"Grill {response} is a duplicate.  Not adding to collection.")
+                                addGrill = False
+
+                        if addGrill:
+                            grills.append(grill(address, response))
                 except ValueError:
                     pass
 
@@ -57,7 +65,6 @@ def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
             # This will always happen, a timeout occurs when we no longer hear from any grills
             # This is the required flow to break out of the `while True:` statement above.
             _LOGGER.debug("Socket timed out.")
-            pass
         finally:
             # Always close the socket
             sock.close()
