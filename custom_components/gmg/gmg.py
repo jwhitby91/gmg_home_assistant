@@ -15,42 +15,61 @@ _LOGGER = logging.getLogger(__name__)
 
 def grills(timeout = 1, ip_bind_address = '0.0.0.0'):
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    
-    # this needs to be 0.0.0.0 ... it was binding to wrong adapter
-    sock.bind((ip_bind_address, grill.UDP_PORT))
+    _LOGGER.debug("Opening up udp sockets and broadcasting for grills.")
+   
+    interfaces = socket.getaddrinfo(host=socket.gethostname(), port=None, family=socket.AF_INET)
+    allips = [ip[-1][0] for ip in interfaces]
+    allips.append(ip_bind_address)
 
     grills = [] 
+    message = grill.CODE_SERIAL
 
-    try:
-        message = grill.CODE_SERIAL
-        
-        # Each recv should have the full timeout period to complete
-        sock.settimeout(timeout)
+    
+    for ip in allips:
+        _LOGGER.debug(f"Creating socket for IP: {ip}")
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+            #Bind to the specific IP for the adapter and use port 0 to signify any open port by the OS
+            sock.bind((ip, 0))
+            
+            # Each recv should have the full timeout period to complete
+            sock.settimeout(timeout)
 
-        sock.sendto(message, ('<broadcast>', grill.UDP_PORT))
+            sock.sendto(message, ('<broadcast>', grill.UDP_PORT))
 
-        while True:
-            # Get some packets from the network
-            data, (address, _) = sock.recvfrom(1024)
-            response = data.decode('utf-8')
+            _LOGGER.debug("Broadcast sent.")
 
-            # Confirm it's a GMG serial number
-            try:
-                if response.startswith('GMG'):
-                    grills.append(grill(address, response))
-            except ValueError:
-                pass
+            while True:
+                addGrill = True
+                # Get some packets from the network
+                data, (address, retSocket) = sock.recvfrom(1024)
+                response = data.decode('utf-8')
 
-    except socket.timeout:
-        # This will always happen, a timeout occurs when we no longer hear from any grills
-        # This is the required flow to break out of the `while True:` statement above.
-        pass
-    finally:
-        # Always close the socket
-        sock.close()
+                _LOGGER.debug(f"Received a response {address}:{retSocket}, {response}")
+                # Confirm it's a GMG serial number
+                try:
+                    if response.startswith('GMG'):
+                        _LOGGER.debug(f"Found grill {address}:{retSocket}, {response}")
+                        for grillTest in grills:
+                            if grillTest._serial_number == response:  # TODO: Define a property for serial number
+                                _LOGGER.debug(f"Grill {response} is a duplicate.  Not adding to collection.")
+                                addGrill = False
 
+                        if addGrill:
+                            grills.append(grill(address, response))
+                except ValueError:
+                    pass
+
+        except socket.timeout:
+            # This will always happen, a timeout occurs when we no longer hear from any grills
+            # This is the required flow to break out of the `while True:` statement above.
+            _LOGGER.debug("Socket timed out.")
+        finally:
+            # Always close the socket
+            sock.close()
+
+    _LOGGER.debug(f"Found {len(grills)} grills.")
     return grills
 
 
